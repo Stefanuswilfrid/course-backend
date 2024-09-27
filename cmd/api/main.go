@@ -5,9 +5,12 @@ import (
 	"log"
 	"os"
 
+	"github.com/Stefanuswilfrid/course-backend/internal/config"
+
 	"github.com/joho/godotenv"
 )
 
+// go run ./cmd/api
 func main() {
 	err := godotenv.Load()
 	apiEnv := os.Getenv("ENV")
