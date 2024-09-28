@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/middleware"
 	"github.com/Stefanuswilfrid/course-backend/internal/response"
 	"github.com/gin-gonic/gin"
 )
