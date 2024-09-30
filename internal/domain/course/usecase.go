@@ -9,6 +9,7 @@ import (
 	"slices"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/config"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/courseenroll"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/notification"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"

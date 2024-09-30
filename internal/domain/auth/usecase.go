@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/config"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
 	"github.com/Stefanuswilfrid/course-backend/internal/jwtoken"
 	"github.com/Stefanuswilfrid/course-backend/internal/schema"

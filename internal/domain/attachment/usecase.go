@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/config"
 	"github.com/Stefanuswilfrid/course-backend/internal/fileutil"
 	"github.com/Stefanuswilfrid/course-backend/internal/schema"
 	"github.com/google/uuid"
