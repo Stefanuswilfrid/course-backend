@@ -87,4 +87,18 @@ func main() {
 	attachmentUseCase := attachment.NewUseCase(attachmentRepo, uploader)
 	attachment.NewRestController(engine, attachmentUseCase)
 
+	assignmentRepo := assignment.NewRepository(db)
+	assignmentUseCase := assignment.NewUseCase(assignmentRepo, attachmentUseCase)
+	assignment.NewRestController(engine, assignmentUseCase, courseUseCase)
+
+	// Submission
+	submissionRepo := submission.NewRepository(db)
+	submissionUseCase := submission.NewUseCase(submissionRepo, assignmentRepo, *attachmentUseCase, courseRepo,
+		courseEnrollRepo, userRepo, notificationRepo, mailDialer)
+	submission.NewRestController(engine, submissionUseCase)
+
+	if err := engine.Run(":" + config.Env.ApiPort); err != nil {
+		log.Fatalln(err)
+	}
+
 }
