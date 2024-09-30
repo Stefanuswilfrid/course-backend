@@ -6,7 +6,10 @@ import (
 	"os"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/config"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/attachment"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/auth"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/course"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/courseenroll"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/notification"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/wallet"
@@ -83,5 +86,19 @@ func main() {
 	attachmentRepo := attachment.NewRepository(db)
 	attachmentUseCase := attachment.NewUseCase(attachmentRepo, uploader)
 	attachment.NewRestController(engine, attachmentUseCase)
+
+	assignmentRepo := assignment.NewRepository(db)
+	assignmentUseCase := assignment.NewUseCase(assignmentRepo, attachmentUseCase)
+	assignment.NewRestController(engine, assignmentUseCase, courseUseCase)
+
+	// Submission
+	submissionRepo := submission.NewRepository(db)
+	submissionUseCase := submission.NewUseCase(submissionRepo, assignmentRepo, *attachmentUseCase, courseRepo,
+		courseEnrollRepo, userRepo, notificationRepo, mailDialer)
+	submission.NewRestController(engine, submissionUseCase)
+
+	if err := engine.Run(":" + config.Env.ApiPort); err != nil {
+		log.Fatalln(err)
+	}
 
 }
