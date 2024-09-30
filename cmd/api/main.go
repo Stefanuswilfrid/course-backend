@@ -7,6 +7,7 @@ import (
 
 	"github.com/Stefanuswilfrid/course-backend/internal/config"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/auth"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/notification"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/wallet"
 	"github.com/Stefanuswilfrid/course-backend/internal/middleware"
@@ -69,5 +70,18 @@ func main() {
 	authRepo := auth.NewRepository(rds)
 	authUseCase := auth.NewUseCase(authRepo, userRepo, mailDialer)
 	auth.NewRestController(engine, authUseCase)
+
+	courseEnrollRepo := courseenroll.NewRepository(db)
+	courseEnrollUseCase := courseenroll.NewUseCase(courseEnrollRepo)
+
+	// Course
+	courseRepo := course.NewRepository(db)
+	courseUseCase := course.NewUseCase(courseRepo, walletRepo, *courseEnrollUseCase, userRepo, notificationRepo, mailDialer, uploader)
+	course.NewRestController(engine, courseUseCase, walletUseCase)
+
+	// Attachment
+	attachmentRepo := attachment.NewRepository(db)
+	attachmentUseCase := attachment.NewUseCase(attachmentRepo, uploader)
+	attachment.NewRestController(engine, attachmentUseCase)
 
 }
