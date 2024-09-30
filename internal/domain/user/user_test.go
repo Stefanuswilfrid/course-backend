@@ -5,10 +5,11 @@ import (
 	"mime/multipart"
 	"testing"
 
+	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/fileutil"
+	"github.com/Stefanuswilfrid/course-backend/internal/schema"
 	"github.com/google/uuid"
-	"github.com/highfive-compfest/seatudy-backend/internal/apierror"
-	"github.com/highfive-compfest/seatudy-backend/internal/fileutil"
-	"github.com/highfive-compfest/seatudy-backend/internal/schema"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"

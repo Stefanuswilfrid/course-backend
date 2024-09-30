@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/apierror"
+	"github.com/Stefanuswilfrid/course-backend/internal/pagination"
 	"github.com/Stefanuswilfrid/course-backend/internal/schema"
 	"github.com/google/uuid"
 )
