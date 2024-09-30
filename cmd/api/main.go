@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/config"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/attachment"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/auth"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/notification"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
