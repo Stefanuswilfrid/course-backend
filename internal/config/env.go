@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -17,10 +18,21 @@ type environmentVariables struct {
 	PostgresPassword string
 	PostgresDbName   string
 
+	RedisHost     string
+	RedisPort     string
+	RedisPassword string
+	RedisDatabase int
+
 	JwtAccessSecret    []byte
 	JwtAccessDuration  time.Duration
 	JwtRefreshSecret   []byte
 	JwtRefreshDuration time.Duration
+
+	SmtpHost     string
+	SmtpPort     int
+	SmtpUsername string
+	SmtpEmail    string
+	SmtpPassword string
 }
 
 var Env *environmentVariables
@@ -40,6 +52,15 @@ func LoadEnv() {
 	env.PostgresPassword = os.Getenv("POSTGRES_PASSWORD")
 	env.PostgresDbName = os.Getenv("POSTGRES_DB")
 
+	env.RedisHost = os.Getenv("REDIS_HOST")
+	env.RedisPort = os.Getenv("REDIS_PORT")
+	env.RedisPassword = os.Getenv("REDIS_PASSWORD")
+	env.RedisDatabase, err = strconv.Atoi(os.Getenv("REDIS_DATABASE"))
+
+	if err != nil && env.ENV != "test" {
+		log.Fatal("Fail to parse REDIS_DATABASE")
+	}
+
 	env.JwtAccessSecret = []byte(os.Getenv("JWT_ACCESS_SECRET"))
 	env.JwtAccessDuration, err = time.ParseDuration(os.Getenv("JWT_ACCESS_DURATION"))
 	if err != nil && env.ENV != "test" {
@@ -51,6 +72,16 @@ func LoadEnv() {
 	if err != nil && env.ENV != "test" {
 		log.Fatal("Fail to parse JWT_REFRESH_DURATION")
 	}
+
+	env.SmtpHost = os.Getenv("SMTP_HOST")
+	env.SmtpPort, err = strconv.Atoi(os.Getenv("SMTP_PORT"))
+	if err != nil && env.ENV != "test" {
+		log.Fatal("Fail to parse SMTP_PORT")
+	}
+	env.SmtpUsername = os.Getenv("SMTP_USERNAME")
+	env.SmtpEmail = os.Getenv("SMTP_EMAIL")
+	env.SmtpPassword = os.Getenv("SMTP_PASSWORD")
+
 	Env = env
 
 }

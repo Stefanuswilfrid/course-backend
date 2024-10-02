@@ -15,6 +15,7 @@ import (
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/wallet"
 	"github.com/Stefanuswilfrid/course-backend/internal/fileutil"
+	"github.com/Stefanuswilfrid/course-backend/internal/mailer"
 	"github.com/Stefanuswilfrid/course-backend/internal/pagination"
 	"github.com/Stefanuswilfrid/course-backend/internal/schema"
 	"github.com/google/uuid"
