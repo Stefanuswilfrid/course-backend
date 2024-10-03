@@ -15,26 +15,11 @@ services:
     hostname: postgres-server
     networks:
       - seatudy-network
-
-  redis:
-    container_name: seatudy-redis
-    image: redis:7.4.0
+  adminer:
+    image: adminer
+    restart: always
     ports:
-      - 6379:6379
-    environment:
-      - REDIS_PASSWORD=redis_pw
-    command: [ "redis-server", "--requirepass", "redis_pw" ]
-    volumes:
-      - redis-data:/data
-    hostname: redis-server
-    networks:
-      - seatudy-network
-
-  your-app:
-    build: .
-    depends_on:
-      - redis
-      - postgres
+      - 8080:8080
     networks:
       - seatudy-network
 
@@ -43,4 +28,3 @@ networks:
 
 volumes:
   postgres-data:
-  redis-data:

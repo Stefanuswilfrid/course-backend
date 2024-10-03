@@ -24,6 +24,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// 8080
+// System: PostgreSQL
+// Server: postgres (This is the hostname you defined in the Docker compose file under hostname: postgres-server, but Adminer needs to communicate with the Docker container, so you use postgres which is the default service name for communication.)
+// Username: postgres (Defined in POSTGRESQL_USERNAME)
+// Password: postgres (Defined in POSTGRESQL_PASSWORD)
+// Database: db (Defined in POSTGRESQL_DATABASE)
+
 // go run ./cmd/api
 func main() {
 
