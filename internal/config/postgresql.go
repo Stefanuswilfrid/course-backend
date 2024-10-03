@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 
 	"gorm.io/gorm/logger"
@@ -16,29 +15,54 @@ func NewPostgresql(migrations ...any) *gorm.DB {
 		gormLogger = gormLogger.LogMode(logger.Info)
 	}
 
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-			Env.PostgresHost,
-			Env.PostgresUser,
-			Env.PostgresPassword,
-			Env.PostgresDbName,
-			Env.PostgresPort,
-		),
-		PreferSimpleProtocol: true, // disables implicit prepared statement usage
-	}), &gorm.Config{
-		Logger: gormLogger,
+	// Hardcoded PostgreSQL URL connection string
+	dsn := "postgres://postgres:postgres@localhost:5433/db"
+
+	// Connect using the provided DSN
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent), // Set logging level to silent
 	})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Run migrations
 	if err := migratePostgresqlTables(db, migrations...); err != nil {
 		log.Fatalln(err)
 	}
 
 	return db
 }
+
+// func NewPostgresql(migrations ...any) *gorm.DB {
+// 	gormLogger := logger.Default
+// 	if Env.ENV != "production" {
+// 		gormLogger = gormLogger.LogMode(logger.Info)
+// 	}
+
+// 	db, err := gorm.Open(postgres.New(postgres.Config{
+// 		DSN: fmt.Sprintf(
+// 			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+// 			Env.PostgresHost,
+// 			Env.PostgresUser,
+// 			Env.PostgresPassword,
+// 			Env.PostgresDbName,
+// 			Env.PostgresPort,
+// 		),
+// 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
+// 	}), &gorm.Config{
+// 		Logger: gormLogger,
+// 	})
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect to database: %v", err)
+// 	}
+
+// 	if err := migratePostgresqlTables(db, migrations...); err != nil {
+// 		log.Fatalln(err)
+// 	}
+
+// 	return db
+// }
 
 func migratePostgresqlTables(db *gorm.DB, migrations ...any) error {
 	if err := db.Exec(`
