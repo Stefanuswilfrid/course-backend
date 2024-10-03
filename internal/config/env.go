@@ -5,6 +5,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/midtrans/midtrans-go"
 )
 
 type environmentVariables struct {
@@ -28,11 +30,19 @@ type environmentVariables struct {
 	JwtRefreshSecret   []byte
 	JwtRefreshDuration time.Duration
 
+	AwsAccessId       string
+	AmsSecretAccessId string
+	AwsRegion         string
+	AwsBucketName     string
+
 	SmtpHost     string
 	SmtpPort     int
 	SmtpUsername string
 	SmtpEmail    string
 	SmtpPassword string
+
+	MidtransServerKey   string
+	MidtransEnvironment midtrans.EnvironmentType
 }
 
 var Env *environmentVariables
@@ -42,9 +52,13 @@ func LoadEnv() {
 	var err error
 
 	env.ENV = os.Getenv("ENV")
+	log.Println("envvv", env.ENV)
+
 	if env.ENV == "" {
 		log.Fatal("ENV is not set")
 	}
+	env.FrontendUrl = os.Getenv("FRONTEND_URL")
+	env.ApiPort = os.Getenv("API_PORT")
 
 	env.PostgresHost = os.Getenv("POSTGRES_HOST")
 	env.PostgresPort = os.Getenv("POSTGRES_PORT")
@@ -73,6 +87,14 @@ func LoadEnv() {
 		log.Fatal("Fail to parse JWT_REFRESH_DURATION")
 	}
 
+	env.AwsAccessId = os.Getenv("AWS_ACCESS_KEY_ID")
+	env.AmsSecretAccessId = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	env.AwsRegion = os.Getenv("AWS_REGION")
+	env.AwsBucketName = os.Getenv("AWS_BUCKET_NAME")
+	if env.AwsBucketName == "" && env.ENV != "test" {
+		log.Fatalf("AWS_BUCKET_NAME is not set in the environment variables")
+	}
+
 	env.SmtpHost = os.Getenv("SMTP_HOST")
 	env.SmtpPort, err = strconv.Atoi(os.Getenv("SMTP_PORT"))
 	if err != nil && env.ENV != "test" {
@@ -82,6 +104,11 @@ func LoadEnv() {
 	env.SmtpEmail = os.Getenv("SMTP_EMAIL")
 	env.SmtpPassword = os.Getenv("SMTP_PASSWORD")
 
-	Env = env
+	env.MidtransServerKey = os.Getenv("MIDTRANS_SERVER_KEY")
+	env.MidtransEnvironment = midtrans.Sandbox
+	//if env.ENV == "production" {
+	//	env.MidtransEnvironment = midtrans.Production
+	//}
 
+	Env = env
 }

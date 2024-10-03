@@ -6,11 +6,16 @@ import (
 	"os"
 
 	"github.com/Stefanuswilfrid/course-backend/internal/config"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/assignment"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/attachment"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/auth"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/course"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/courseenroll"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/forum"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/material"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/notification"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/review"
+	"github.com/Stefanuswilfrid/course-backend/internal/domain/submission"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/user"
 	"github.com/Stefanuswilfrid/course-backend/internal/domain/wallet"
 	"github.com/Stefanuswilfrid/course-backend/internal/middleware"
@@ -21,8 +26,12 @@ import (
 
 // go run ./cmd/api
 func main() {
+	log.Println("first")
+
 	err := godotenv.Load()
 	apiEnv := os.Getenv("ENV")
+	log.Println("test")
+
 	if err != nil && apiEnv == "" {
 		log.Println("fail to load env", err)
 	}
@@ -43,9 +52,15 @@ func main() {
 		&schema.ForumDiscussion{},
 		&schema.ForumReply{},
 	)
+	rds := config.NewRedis()
+
+	mailDialer := config.NewMailDialer()
+	config.SetupMidtrans()
 
 	engine := config.NewGin()
 	engine.Use(middleware.CORS())
+
+	uploader, err := config.InitializeS3()
 
 	if err != nil {
 		log.Println("fail to connect s3 bucket", err)
@@ -96,6 +111,19 @@ func main() {
 	submissionUseCase := submission.NewUseCase(submissionRepo, assignmentRepo, *attachmentUseCase, courseRepo,
 		courseEnrollRepo, userRepo, notificationRepo, mailDialer)
 	submission.NewRestController(engine, submissionUseCase)
+
+	materialRepo := material.NewRepository(db)
+	materialUsecase := material.NewUseCase(materialRepo, attachmentUseCase)
+	material.NewRestController(engine, materialUsecase, courseUseCase)
+
+	reviewRepo := review.NewRepository(db)
+	reviewUseCase := review.NewUseCase(reviewRepo, courseRepo, courseEnrollUseCase)
+	review.NewRestController(engine, reviewUseCase)
+
+	// Forum
+	forumRepo := forum.NewRepository(db)
+	forumUseCase := forum.NewUseCase(forumRepo, courseEnrollUseCase, courseRepo)
+	forum.NewRestController(engine, forumUseCase)
 
 	if err := engine.Run(":" + config.Env.ApiPort); err != nil {
 		log.Fatalln(err)
