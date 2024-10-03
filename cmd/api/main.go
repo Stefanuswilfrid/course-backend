@@ -26,11 +26,9 @@ import (
 
 // go run ./cmd/api
 func main() {
-	log.Println("first")
 
 	err := godotenv.Load()
 	apiEnv := os.Getenv("ENV")
-	log.Println("test")
 
 	if err != nil && apiEnv == "" {
 		log.Println("fail to load env", err)
@@ -52,7 +50,6 @@ func main() {
 		&schema.ForumDiscussion{},
 		&schema.ForumReply{},
 	)
-	rds := config.NewRedis()
 
 	mailDialer := config.NewMailDialer()
 	config.SetupMidtrans()
@@ -85,7 +82,7 @@ func main() {
 	user.NewRestController(engine, userUseCase)
 
 	// Auth
-	authRepo := auth.NewRepository(rds)
+	authRepo := auth.NewRepository()
 	authUseCase := auth.NewUseCase(authRepo, userRepo, mailDialer)
 	auth.NewRestController(engine, authUseCase)
 
